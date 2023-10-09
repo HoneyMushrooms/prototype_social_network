@@ -1,0 +1,10 @@
+.block {
+    width: 68%;
+    background-color: #ebb6f4;
+    border-radius: 7px;
+    min-height: 80vh;
+}
+
+.title {
+    display: block;
+}

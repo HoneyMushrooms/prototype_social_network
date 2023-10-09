@@ -1,0 +1,112 @@
+.container {
+    margin: 2% 2% 1% 2%;
+    display: grid;
+	grid-template-columns: 225px 1fr;
+    background-color: #ddd;
+    padding: 2%;
+    border-radius: 7px;
+}
+  
+.logo {
+    width: 210px;
+    height: 280px;
+    border-radius: 7px;
+    object-fit: cover;
+}
+  
+.title {
+    display: inline-block;
+}
+
+.container p {
+    font-size: large;
+    margin-top: 10px;
+}
+
+.form_input {
+	font-size: medium;
+	min-width: 100%;
+	padding: 13px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+}
+
+.create_post {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto auto;
+    margin: 1% 2%;
+    background-color: #ddd;
+    padding: 2%;
+    border-radius: 7px;
+    row-gap: 4px;
+}
+
+.create_post button {
+	padding: 13px 45px;
+	border-radius: 7px;
+	font-size: medium;
+    float: right;
+}
+
+input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+input[type="file"] + label {
+	cursor: pointer;
+}
+
+.icon {
+    width: 25px;
+    height: 25px;
+    margin: 8px 10px 0 10px;
+}
+
+.input_label {
+    position: absolute;
+    pointer-events: none;
+    left: 15px;
+    right: 15px;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 40px;
+    transition: .3s;
+}
+
+.form_item {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.new_file {
+    grid-column-start: 2;
+    grid-row-start: 4;
+    background-color: blue;
+}
+
+.post {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto auto;
+    margin: 1% 2%;
+    background-color: #ddd;
+    padding: 2%;
+    border-radius: 7px;
+    row-gap: 4px;
+}
+
+.edit {
+    float: right;
+    cursor: pointer;
+    width: 23px;
+    height: 23px;
+}

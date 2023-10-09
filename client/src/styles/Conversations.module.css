@@ -1,0 +1,34 @@
+.container {
+    margin: 2% 2% 1% 2%;
+    background-color: #ddd;
+    padding: 2%;
+    border-radius: 7px;
+}
+
+.item {
+    display: grid;
+	grid-template-columns: 80% auto;
+    grid-template-rows: auto, 20px;
+    grid-template-areas: "fullName fullName" "msg date";
+    row-gap: 20px;
+    cursor: pointer;
+}
+
+.fullName {
+    grid-area: fullName;
+}
+
+.msg {
+    grid-area: msg;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: large;
+    color: #373737;
+}
+
+.date {
+    grid-area: date;
+    text-align: center;
+    font-size: large;
+}

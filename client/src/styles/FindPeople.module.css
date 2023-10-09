@@ -1,0 +1,44 @@
+.form_find {
+    margin: 1% 2%;
+    background-color: #ddd;
+    padding: 2%;
+    border-radius: 7px;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+}
+
+.form_find button{
+    float: right;
+    padding: 13px 40px;
+    border-radius: 7px;
+    font-size: medium;
+}
+
+.form_find input{
+    font-size: medium;
+	padding: 13px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    margin-right: 2%;
+    width: 98%;
+}
+
+.input_label {
+    position: absolute;
+    pointer-events: none;
+    left: 15px;
+    right: 15px;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 40px;
+    transition: .3s;
+}
+
+.form_item {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}

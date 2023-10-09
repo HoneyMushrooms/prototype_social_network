@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: react
+    build: ./client
+    depends_on:
+      - backend
+    ports:
+      - '3000:3000'
+  backend:
+    container_name: express-server
+    build: ./server
+    volumes:
+      - server_files:/app/files
+    ports:
+      - '5000:5000'
+    environment:
+      - REDIS_URL=redis
+      - POSTGRES_HOST=postgres
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    container_name: db_postgres
+    image: postgres
+    env_file:
+      - ./server/.env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  redis: 
+    container_name: db_redis
+    image: redis
+    volumes:
+      - redis_data:/data
+
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=danila8963100@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=1
+    volumes:
+      - pg_admin_data:/var/lib/pgadmin
+    ports:
+      - '5050:80'
+
+volumes:
+  pg_data: 
+  pg_admin_data:
+  redis_data:
+  server_files:

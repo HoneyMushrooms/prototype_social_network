@@ -1,0 +1,109 @@
+.chat_messages {
+    height: 59vh;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 1rem;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      width: 0.2rem;
+      &-thumb {
+        background-color: #ffffff39;
+        width: 0.1rem;
+        border-radius: 1rem;
+      }
+    }
+  }
+
+  .chat_messages .content {
+    font-size: 1.1rem;
+    border-radius: 1rem;
+    padding: 5px 10px;
+    max-width: 50%;
+    border: 1px solid rgb(126, 26, 99);
+  }
+  
+  .chat_messages .sended .content {
+    float: right;
+  }
+  
+  .chat_messages .recieved .content {
+    float: left;
+  }
+
+  .create_post {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: auto auto;
+    margin: 1% 2% 0 2%;
+    background-color: #ddd;
+    border-radius: 7px;
+    row-gap: 4px;
+}
+
+.form_input {
+	font-size: medium;
+	min-width: 100%;
+	padding: 13px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+}
+
+.create_post button {
+	padding: 13px 45px;
+	border-radius: 7px;
+	font-size: medium;
+    float: right;
+}
+
+input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+input[type="file"] + label {
+	cursor: pointer;
+}
+
+.icon {
+    width: 25px;
+    height: 25px;
+    margin: 8px 10px 0 10px;
+}
+
+.input_label {
+    position: absolute;
+    pointer-events: none;
+    left: 15px;
+    right: 15px;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 40px;
+    transition: .3s;
+}
+
+.form_item {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.new_file {
+    grid-column-start: 2;
+    grid-row-start: 4;
+    background-color: blue;
+}
+
+.img_post{
+    height: 240px;
+    max-width: 100%;
+    object-fit: cover;
+    display: flex;
+    margin: 0 auto;
+}
