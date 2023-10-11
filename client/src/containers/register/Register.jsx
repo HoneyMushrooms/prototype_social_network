@@ -18,10 +18,10 @@ function RegisterPage({ setFirstConnect }) {
     const [values, setValues] = useState({
         name: "",
         surname: "",
-        email: "danila8963100@gmail.com",
-        city: "Витебск",
-        password: "111",
-        repeat_password: "111",
+        email: "",
+        city: "",
+        password: "",
+        repeat_password: "",
     });
 
     useEffect(() => {
