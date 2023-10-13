@@ -1,0 +1,11 @@
+.news {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    height: 100%;
+    align-items: center;
+    font-size: xx-large;
+}

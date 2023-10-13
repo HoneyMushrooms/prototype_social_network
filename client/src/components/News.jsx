@@ -2,6 +2,7 @@ import Posts from "./Posts";
 import { getNews } from "../utils/router";
 import api from "../utils/axios";
 import { useEffect, useState } from "react";
+import styles from '../styles/News.module.css';
 
 const News = ({ handleLinkClick }) => {
 
@@ -43,7 +44,7 @@ const News = ({ handleLinkClick }) => {
     }
 
     return ( 
-        <Posts posts={news} news={true} profileId={true} handleLinkClick={handleLinkClick}/>
+        news.length ? <Posts posts={news} news={true} profileId={true} handleLinkClick={handleLinkClick}/> : <h2 className={styles.news}>Тут будут новости</h2>
     )
 } 
 
