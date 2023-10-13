@@ -4,6 +4,7 @@ import cross from '../img/cross.png';
 import api from '../utils/axios';
 import { deletePost } from '../utils/router';
 import changeTimeFormat from '../utils/changeTimeFormat';
+import Like from '../img/like.png';
 
 const Posts = ({ posts, setPosts, profileId, news, handleLinkClick }) => {
     
@@ -53,6 +54,7 @@ const Posts = ({ posts, setPosts, profileId, news, handleLinkClick }) => {
                 </div>
                 )}
                 {post.type === '' && post.text !== '' && <p>{post.text}</p>}
+                <div style={{margin: '20px 0 0 20px'}}><span className={styles.like_num}>{post?.like || 0}<img className={styles.like_img} src={Like} alt="Like" /></span></div>
             </div>
             ))}
         </div>

@@ -73,4 +73,18 @@
 .news:hover {
     text-decoration: underline;
     cursor: pointer;
-} 
+}
+
+
+.like_num {
+    border-radius: 50%;
+    padding: 4px 7px;
+    background: #ddd;
+    border: 2px solid #c10f8e;
+    color: black;
+    font-size: medium;
+}
+
+.like_img {
+    width: 17px;
+}
