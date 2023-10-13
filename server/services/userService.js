@@ -38,6 +38,7 @@ export default new class userService {
         }
 
         const { rows: newPost } = await postgresDB.query( 'INSERT INTO public.post (text, user_id, link, type, create_time) VALUES ($1, $2, $3, $4, now()) RETURNING *', [text, id, link, type] );
+        
         return newPost;
     }
 
@@ -109,5 +110,21 @@ export default new class userService {
         );
 
         return conversationData;
+    }
+
+    async updateLikeCount (post_id, user_id) {
+
+        const { rows } = await postgresDB.query( 'SELECT 1 FROM public.like WHERE post_id = $1 AND user_id = $2', [post_id, user_id] );
+        let likeData;
+
+        if(rows[0].length) {
+            postgresDB.query( 'DELETE FROM public.like WHERE post_id = $1 AND user_id = $2', [post_id, user_id] );
+            likeData = await postgresDB.query( 'UPDATE public.post SET like = like - 1 WHERE id = $1 RETURNING like', [post_id] );
+        } else {
+            postgresDB.query( 'INSERT INTO public.like (post_id, user_id) VALUES ($1, $2)', [post_id, user_id] );
+            likeData = await postgresDB.query( 'UPDATE public.post SET like = like + 1 WHERE id = $1 RETURNING like', [post_id] );
+        }
+
+        return likeData;
     }
 }
