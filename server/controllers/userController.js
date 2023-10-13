@@ -73,4 +73,16 @@ export default new class AuthController {
             next(err);
         }
     }
+
+    
+    async updateLikeCount(req, res, next) {
+        try {
+            const { post_id, user_id } = req.body;
+            const likeData = await UserService.updateLikeCount(post_id, user_id);
+
+            return res.json(likeData);
+        } catch(err) {
+            next(err);
+        }
+    }
 }

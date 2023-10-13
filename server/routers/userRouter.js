@@ -10,6 +10,7 @@ router.put('/', upload.single('file'), UserController.updateUser);
 router.get('/news', UserController.getNews);
 router.post('/post', upload.single('file'), UserController.createPost);
 router.delete('/post/:id', UserController.deletePost);
-router.get('/conversation', UserController.getConversation)
-            
+router.get('/conversation', UserController.getConversation);
+router.patch('/like', UserController.updateLikeCount);
+
 export default router;
