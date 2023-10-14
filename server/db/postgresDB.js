@@ -93,11 +93,12 @@ async function createDatabaseAndTables() {
                 link character varying(255) COLLATE pg_catalog."default",
                 type character varying(5) COLLATE pg_catalog."default",
                 create_time time without time zone,
+                "like" integer DEFAULT 0,
                 CONSTRAINT post_pkey PRIMARY KEY (id),
                 CONSTRAINT user_id FOREIGN KEY (user_id)
                     REFERENCES public."user" (id) MATCH SIMPLE
                     ON UPDATE NO ACTION
-                    ON DELETE NO ACTION
+                    ON DELETE CASCADE
                     NOT VALID
             )`
         );
@@ -147,6 +148,27 @@ async function createDatabaseAndTables() {
                     NOT VALID
             )`
         );
+
+        await pool.query(`
+        CREATE TABLE IF NOT EXISTS public."like"
+        (
+            id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+            post_id integer,
+            user_id uuid,
+            CONSTRAINT likes_pkey PRIMARY KEY (id),
+            CONSTRAINT post_id FOREIGN KEY (post_id)
+                REFERENCES public.post (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE
+                NOT VALID,
+            CONSTRAINT user_id FOREIGN KEY (user_id)
+                REFERENCES public."user" (id) MATCH SIMPLE
+                ON UPDATE NO ACTION
+                ON DELETE CASCADE
+                NOT VALID
+            )`
+        );
+
     }
     await client.end();
 }
