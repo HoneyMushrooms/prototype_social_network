@@ -103,5 +103,9 @@ dist
 .env
 .env.test
 
+server/files/userFiles
+server/files/dialogFiles
+
+
 
 
