@@ -4,18 +4,42 @@ import cross from '../img/cross.png';
 import api from '../utils/axios';
 import { deletePost } from '../utils/router';
 import changeTimeFormat from '../utils/changeTimeFormat';
+import Like from '../img/like.png';
+import { setLike } from '../utils/router';
+import { useContext } from 'react';
+import { Context } from '..';
 
 const Posts = ({ posts, setPosts, profileId, news, handleLinkClick }) => {
+    const { store } = useContext(Context);
     
     const handleClick = async(id) => {
         try {
             await api.delete(deletePost + '/' + id);
-            setPosts((prev) => {
+            setPosts(prev => {
                 const posts = prev.filter(e => e.id !== id);
                 return [...posts];
             })
         } catch(err) {
             console.log('ошибка в deletePost');
+        }
+	};
+
+    const handleClickLike = async(post_id) => {
+        try {
+            const { data } = await api.patch(setLike, {post_id, user_id: store.user.id});
+            setPosts(prev => {
+                const posts = prev.map(e => {
+                    if(e.id === post_id) {
+                        e.like = data.like;
+                        e.flag = data.flag;
+                    }
+                    return e;
+                });
+                
+                return [...posts];
+            })
+        } catch(err) {
+            console.log('ошибка в setLike', err);
         }
 	};
 
@@ -53,6 +77,7 @@ const Posts = ({ posts, setPosts, profileId, news, handleLinkClick }) => {
                 </div>
                 )}
                 {post.type === '' && post.text !== '' && <p>{post.text}</p>}
+                <div style={{margin: '20px 0 0 20px'}}><span onClick={() => handleClickLike(post.id)} className={`${styles.like_num} ${post.flag ? styles.like_set : ''}`}>{post?.like || 0}<img className={styles.like_img} src={Like} alt="Like" /></span></div>
             </div>
             ))}
         </div>

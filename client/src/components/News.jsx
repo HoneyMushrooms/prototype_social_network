@@ -44,7 +44,7 @@ const News = ({ handleLinkClick }) => {
     }
 
     return ( 
-        news.length ? <Posts posts={news} news={true} profileId={true} handleLinkClick={handleLinkClick}/> : <h2 className={styles.news}>Тут будут новости</h2>
+        news.length ? <Posts posts={news} setPosts={setNews} news={true} profileId={true} handleLinkClick={handleLinkClick}/> : <h2 className={styles.news}>Тут будут новости</h2>
     )
 } 
 

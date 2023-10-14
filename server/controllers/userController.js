@@ -4,8 +4,8 @@ export default new class AuthController {
 
     async getUser(req, res, next) {
         try {
-            const { id } = req.query;
-            const userData = await UserService.getUser(id);
+            const { user_id, liker_id } = req.query;
+            const userData = await UserService.getUser(user_id, liker_id);
             
             return res.json(userData);
         } catch(err) {
@@ -69,6 +69,18 @@ export default new class AuthController {
             const conversationData = await UserService.getConversation(id);
 
             return res.json(conversationData);
+        } catch(err) {
+            next(err);
+        }
+    }
+
+    
+    async updateLikeCount(req, res, next) {
+        try {
+            const { post_id, user_id } = req.body;
+            const likeData = await UserService.updateLikeCount(post_id, user_id);
+
+            return res.json(likeData);
         } catch(err) {
             next(err);
         }

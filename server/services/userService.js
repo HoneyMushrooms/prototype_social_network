@@ -4,27 +4,29 @@ import { rm } from 'fs/promises';
 
 export default new class userService {
 
-    async getUser(id) {
+    async getUser(user_id, liker_id) {
         
         const { rows: userData } = await postgresDB.query( `
             SELECT u.id, name, surname, city, logo
               FROM public."user" u
               JOIN public.user_info i ON u.id = i.user_id
-             WHERE u.id = $1`, [id] 
+             WHERE u.id = $1`, [user_id] 
         );
 
-        const { rows: postData } = await postgresDB.query( `
-            SELECT text, create_time, link, type, id 
-             FROM public.post
-            WHERE user_id = $1
-            ORDER BY id DESC`, [id]
+        const { rows: postData } = await postgresDB.query(`
+            SELECT p.*,
+                   CASE WHEN l.user_id = $2 THEN true ELSE false END AS flag
+              FROM public.post p
+              LEFT JOIN public.like l ON p.id = l.post_id AND l.user_id = $2
+             WHERE p.user_id = $1
+             ORDER BY p.id DESC`, [user_id, liker_id]
         );
 
         const { rows: relationshipData } = await postgresDB.query(`
             SELECT
            (SELECT COUNT(*) FROM relationship WHERE user1 = $1 AND relationship_status = false) AS subscriptions,
            (SELECT COUNT(*) FROM relationship WHERE user2 = $1 AND relationship_status = false) AS followers,
-           (SELECT COUNT(*) FROM relationship WHERE (user1 = $1 OR user2 = $1) AND relationship_status = true) AS friends`, [id]
+           (SELECT COUNT(*) FROM relationship WHERE (user1 = $1 OR user2 = $1) AND relationship_status = true) AS friends`, [user_id]
         );
 
         return { userData: { ...userData[0], ...relationshipData[0] }, postData };
@@ -38,6 +40,7 @@ export default new class userService {
         }
 
         const { rows: newPost } = await postgresDB.query( 'INSERT INTO public.post (text, user_id, link, type, create_time) VALUES ($1, $2, $3, $4, now()) RETURNING *', [text, id, link, type] );
+        
         return newPost;
     }
 
@@ -63,9 +66,10 @@ export default new class userService {
     }
 
     async getNews(id, limit, lastItem = 2147483647) {
-    
+
         const { rows: newsData } = await postgresDB.query(`
-            SELECT p.id as id, name, surname, uuid, create_time, text, link, type
+            SELECT p.id as id, name, surname, uuid, create_time, text, link, type, p.like, 
+                   CASE WHEN l.user_id = $1 THEN true ELSE false END AS flag 
               FROM public.user u
               JOIN (
                    SELECT CASE
@@ -76,6 +80,7 @@ export default new class userService {
                    ) r ON r.uuid = u.id
               JOIN public.user_info ui ON r.uuid = ui.user_id  
               JOIN public.post p ON r.uuid = p.user_id
+              LEFT JOIN public.like l ON p.id = l.post_id AND l.user_id = $1
              WHERE p.id < $2
              ORDER BY p.id DESC
              LIMIT $3`, [id, lastItem, limit]
@@ -109,5 +114,23 @@ export default new class userService {
         );
 
         return conversationData;
+    }
+
+    async updateLikeCount (post_id, user_id) {
+
+        const { rows } = await postgresDB.query( 'SELECT 1 FROM public."like" WHERE post_id = $1 AND user_id = $2', [post_id, user_id] );
+        let likeData, flag;
+
+        if(rows?.length) {
+            postgresDB.query( 'DELETE FROM public."like" WHERE post_id = $1 AND user_id = $2', [post_id, user_id] );
+            likeData = await postgresDB.query( 'UPDATE public.post SET "like" = "like" - 1 WHERE id = $1 RETURNING "like"', [post_id] );
+            flag = false;
+        } else {
+            postgresDB.query( 'INSERT INTO public."like" (post_id, user_id) VALUES ($1, $2)', [post_id, user_id] );
+            likeData = await postgresDB.query( 'UPDATE public.post SET "like" = "like" + 1 WHERE id = $1 RETURNING "like"', [post_id] );
+            flag = true;
+        }
+
+        return { like: likeData.rows[0].like, flag };
     }
 }
