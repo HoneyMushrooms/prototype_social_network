@@ -43,7 +43,7 @@ const News = ({ handleLinkClick }) => {
     }
 
     return ( 
-        <Posts posts={news} news={true} profileId={true} handleLinkClick={handleLinkClick}/>
+        <Posts posts={news} setPosts={setNews} news={true} profileId={true} handleLinkClick={handleLinkClick}/>
     )
 } 
 

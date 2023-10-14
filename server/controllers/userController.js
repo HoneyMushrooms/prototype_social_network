@@ -4,8 +4,8 @@ export default new class AuthController {
 
     async getUser(req, res, next) {
         try {
-            const { id } = req.query;
-            const userData = await UserService.getUser(id);
+            const { user_id, liker_id } = req.query;
+            const userData = await UserService.getUser(user_id, liker_id);
             
             return res.json(userData);
         } catch(err) {

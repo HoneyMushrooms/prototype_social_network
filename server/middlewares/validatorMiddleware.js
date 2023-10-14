@@ -28,7 +28,8 @@ const validationResetPassword = [
 ];
 
 const validationUserId = [
-    query('id').isUUID().withMessage('Некорректный id!'),
+    query('user_id').isUUID().withMessage('Некорректный id!'),
+    query('liker_id').isUUID().withMessage('Некорректный id!'),
     validationData
 ];
 

@@ -5,14 +5,13 @@ import Posts from '../Posts';
 import api from '../../utils/axios';
 import { getUser, createPost } from '../../utils/router';
 import { Context } from "../..";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import toastOptions from '../../utils/toast';
 import 'react-toastify/dist/ReactToastify.css';
 import edit from '../../img/edit.png';
 import { host } from '../../utils/router'; 
 
 const Profile = ({ handleLinkClick, profileId }) => {
-    window.scrollTo({top: 0});
     const { store } = useContext(Context);
     const [file, setFile] = useState(null);
     const [text, setText] = useState('');
@@ -20,16 +19,16 @@ const Profile = ({ handleLinkClick, profileId }) => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
-        async function getUserInfo(id) {
+        async function getUserInfo(user_id, liker_id) {
             try {
-                const { data } = await api.get(getUser, { params: { id } });
+                const { data } = await api.get(getUser, { params: { user_id, liker_id } });
                 setUser(data.userData);
                 setPosts(data.postData);
             } catch(err) {
                 console.log('ошибка в getUser', err);
             }
         }
-        profileId ? getUserInfo(profileId) : getUserInfo(store.user.id);
+        profileId ? getUserInfo(profileId, store.user.id) : getUserInfo(store.user.id, store.user.id);
     }, []);
 
     const handleFileChange = (event) => {

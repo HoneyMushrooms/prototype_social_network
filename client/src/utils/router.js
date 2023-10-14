@@ -10,6 +10,7 @@ export const getUser = `${host}/api/user`;
 export const updateUser = `${host}/api/user`;
 export const createPost = `${host}/api/user/post`;
 export const deletePost = `${host}/api/user/post`;
+export const setLike = `${host}/api/user/like`;
 
 export const subscription = `${host}/api/relationship/subscription`;
 export const follower = `${host}/api/relationship/follower`;
