@@ -6,6 +6,7 @@ users can register/login/logout, edit profile, refresh password, create posts, s
 server uses `express`, `ws`, `redis` for saves `JWT` with fingerprint and `postgreSQL` for userData
 
 client uses `react` with `mobx`
+
 Note: the client will be rewritten after a thorough study of react :)
 
 ## Installation and launch
