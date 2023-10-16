@@ -1,5 +1,6 @@
 # Social network
 
+## Description
 users can register/login/logout, edit profile, refresh password, create posts, set likes, add/remove friends and view their pages, send messages to friends
 
 server uses `express`, `ws`, `redis` for saves `JWT` with fingerprint and `postgreSQL` for userData
