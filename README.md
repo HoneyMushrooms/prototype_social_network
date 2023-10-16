@@ -7,7 +7,7 @@ server uses `express`, `ws`, `redis` for saves `JWT` with fingerprint and `postg
 
 client uses `react` with `mobx`
 
-Note: the client will be rewritten after a thorough study of react :)
+Note: the client will be rewritten after a thorough study of `react` :)
 
 ## Installation and launch
 
