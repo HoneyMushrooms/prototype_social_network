@@ -4,7 +4,8 @@ users can register/login/logout, edit profile, refresh password, create posts, s
 
 server uses `express`, `ws`, `redis` for saves `JWT` with fingerprint and `postgreSQL` for userData
 
-client uses `react-mobx`, but I used it only for complete my ideas, I`m not learning it just use at the moment. I'll rewrite client in the future
+client uses `react` with `mobx`
+Note: the client will be rewritten after a thorough study of react :)
 
 ## Installation and launch
 
