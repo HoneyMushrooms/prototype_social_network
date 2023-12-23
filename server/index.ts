@@ -29,8 +29,12 @@ try {
     const ws = new WebSocketServer({ server });
     
     ws.on('connection', (socket, req) => {
-        const id = req.url.slice(1);
-    
+        const id = req.url?.slice(1);
+        
+        if(!id) {
+            throw new Error('something wrong');
+        }
+
         if(!sockets.get(id)) {
             sockets.set(id, [socket]);         
         } else {
@@ -38,7 +42,7 @@ try {
         }        
         
         socket.on('message', (message) => {
-            const msg = JSON.parse(message);
+            const msg = JSON.parse(message.toString());
             const recipient = sockets.get(msg.to);
             
             if(recipient) {

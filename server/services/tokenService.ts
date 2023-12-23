@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken';
-import { env } from 'process';
 import redisDB from '../db/redisDB.js';
+import { ITokenPayload } from './token.interface.js';
 
 export default new class TokenService {
     
-    generationTokens(payload) {
-        const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET, {expiresIn: '30m'});
-        const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET, {expiresIn: '60d'});
+    generationTokens(payload: ITokenPayload) {
+        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, {expiresIn: '30m'});
+        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {expiresIn: '60d'});
 
         return { accessToken, refreshToken };
     }
@@ -25,7 +25,7 @@ export default new class TokenService {
         }));
     }
 
-    async removeToken(refreshToken, fingerprint, id) {
+    async removeToken(refreshToken: string, fingerprint: string, id: string) {
         const tokenData = await redisDB.SMEMBERS(id);
 
         tokenData.forEach( async (e) => {
@@ -35,25 +35,25 @@ export default new class TokenService {
         });
     }
 
-    validateAccessToken(accessToken) {
+    validateAccessToken(accessToken: string) {
         try {
-            const { id } = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+            const { id } = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET as string) as ITokenPayload;
             return id;
         } catch(e) {
             return null;
         }
     }
     
-    validateRefreshToken(refreshToken) {
+    validateRefreshToken(refreshToken: string) {
         try {
-            const { id } = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+            const { id } = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string) as ITokenPayload;
             return id;
         } catch(e) {
             return null;
         }
     }
 
-    async findToken(id, token, fingerprint) {
+    async findToken(id: string, token: string, fingerprint: string) {
         const tokenData = await redisDB.SMEMBERS(id);
         let tk;
         

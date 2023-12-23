@@ -1,5 +1,4 @@
 import AuthService from "../services/authService.js";
-import { env } from 'process';
 
 export default new class AuthController {
 
@@ -34,7 +33,7 @@ export default new class AuthController {
             const { link } = req.params;
             await AuthService.activate(link); 
             
-            return res.redirect(301, env.CLIENT_URL + '/main?confirm_email=Вы успешно подтвердили почту!');
+            return res.redirect(301, process.env.CLIENT_URL + '/main?confirm_email=Вы успешно подтвердили почту!');
         } catch(err) {
             next(err);
         }
@@ -56,7 +55,7 @@ export default new class AuthController {
             const { link, password } = req.body;
             await AuthService.resetPassword(link, password);
             
-            return res.json("Пароль успешно изменен!");
+            return res.json('Пароль успешно изменен!');
         } catch(err) {
             next(err);
         }
