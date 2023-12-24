@@ -1,7 +1,8 @@
 import ApiError from "../exception/apiError.js";
 import TokenService from "../services/tokenService.js";
+import { Request, Response, NextFunction } from "express";
 
-export default function (req, res, next) {
+export default function (req: Request, res: Response, next: NextFunction) {
     try {
         if(!req.get('authorization')) {
             return next(ApiError.UnauthorizedError());

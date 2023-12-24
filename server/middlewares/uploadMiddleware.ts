@@ -8,8 +8,8 @@ const upload = multer({
         destination: function (req, file, cb) {
             
             const id = req.id;
-            let pathToFolder;
-
+            let pathToFolder: string;
+        
             if(req.method === 'PUT') {
                 pathToFolder = join(resolve(), 'files', 'userFiles', id, 'logo');
             } else if(req.baseUrl === '/api/message') {

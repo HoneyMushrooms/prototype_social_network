@@ -1,4 +1,5 @@
 import AuthService from "../services/authService.js";
+import { Request, Response, NextFunction } from "express";
 
 export default new class AuthController {
 
@@ -16,7 +17,7 @@ export default new class AuthController {
         }
     }
 
-    async login(req, res, next) {
+    async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password, fingerprint } = req.body;
             const { tokens, userData } = await AuthService.login(email, password, fingerprint);
@@ -28,7 +29,7 @@ export default new class AuthController {
         }
     }
 
-    async active(req, res, next) {
+    async active(req: Request, res: Response, next: NextFunction) {
         try {
             const { link } = req.params;
             await AuthService.activate(link); 
@@ -39,7 +40,7 @@ export default new class AuthController {
         }
     }
 
-    async forgotPassword(req, res, next) {
+    async forgotPassword(req: Request, res: Response, next: NextFunction) {
         try {
             const { email } = req.body;
             const id = await AuthService.forgotPassword(email);
@@ -50,7 +51,7 @@ export default new class AuthController {
         }
     }
 
-    async resetPassword(req, res, next) {
+    async resetPassword(req: Request, res: Response, next: NextFunction) {
         try {
             const { link, password } = req.body;
             await AuthService.resetPassword(link, password);
@@ -61,7 +62,7 @@ export default new class AuthController {
         }
     }
 
-    async refresh(req, res, next) {
+    async refresh(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies;
             const { fingerprint } = req.body
@@ -74,7 +75,7 @@ export default new class AuthController {
         }
     }
 
-    async logout(req, res, next) {
+    async logout(req: Request, res: Response, next: NextFunction) {
         try {
             const { refreshToken } = req.cookies;
             const { fingerprint } = req.body; 

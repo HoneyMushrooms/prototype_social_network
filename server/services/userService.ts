@@ -1,12 +1,13 @@
 import { pool as postgresDB } from '../db/postgresDB.js';
 import { join } from 'path';
 import { rm } from 'fs/promises';
+import { IUserData, IRelationshipData } from './user.interfase.js';
 
 export default new class userService {
 
-    async getUser(user_id, liker_id) {
+    async getUser(user_id: string, liker_id: string) {
         
-        const { rows: userData } = await postgresDB.query( `
+        const { rows: userData } = await postgresDB.query<IUserData>(`
             SELECT u.id, name, surname, city, logo
               FROM public."user" u
               JOIN public.user_info i ON u.id = i.user_id
@@ -22,7 +23,7 @@ export default new class userService {
              ORDER BY p.id DESC`, [user_id, liker_id]
         );
 
-        const { rows: relationshipData } = await postgresDB.query(`
+        const { rows: relationshipData } = await postgresDB.query<IRelationshipData>(`
             SELECT
            (SELECT COUNT(*) FROM relationship WHERE user1 = $1 AND relationship_status = false) AS subscriptions,
            (SELECT COUNT(*) FROM relationship WHERE user2 = $1 AND relationship_status = false) AS followers,
@@ -32,7 +33,8 @@ export default new class userService {
         return { userData: { ...userData[0], ...relationshipData[0] }, postData };
     }
 
-    async createPost(id, file, text) {
+    async createPost(id: string, file: Express.Multer.File, text: string) {
+
         let link = '', type = '';
         if(file) {
             link = join('userFiles', id, 'posts', file.filename);
@@ -44,7 +46,7 @@ export default new class userService {
         return newPost;
     }
 
-    async daletePost(id) {
+    async daletePost(id: string) {
 
         const { rows: linkData } = await postgresDB.query( 'DELETE FROM public.post WHERE id = $1 RETURNING link', [id] );
         if(linkData[0].link) {

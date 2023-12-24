@@ -1,8 +1,9 @@
 import UserService from "../services/userService.js";
+import { Request, Response, NextFunction } from "express";
 
 export default new class AuthController {
 
-    async getUser(req, res, next) {
+    async getUser(req: Request, res: Response, next: NextFunction) {
         try {
             const { user_id, liker_id } = req.query;
             const userData = await UserService.getUser(user_id, liker_id);
@@ -13,7 +14,7 @@ export default new class AuthController {
         }
     }
 
-    async updateUser(req, res, next) {
+    async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const file = req.file;
@@ -26,7 +27,7 @@ export default new class AuthController {
         }
     }
 
-    async createPost(req, res, next) {
+    async createPost(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const file = req.file;
@@ -40,7 +41,7 @@ export default new class AuthController {
         }
     }
 
-    async deletePost(req, res, next) {
+    async deletePost(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             await UserService.daletePost(id);
@@ -51,7 +52,7 @@ export default new class AuthController {
         }
     }
 
-    async getNews(req, res, next) {
+    async getNews(req: Request, res: Response, next: NextFunction) {
         try {
             const { limit, lastItem } = req.query;
             const id = req.id;
@@ -63,7 +64,7 @@ export default new class AuthController {
         }
     }
 
-    async getConversation(req, res, next) {
+    async getConversation(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const conversationData = await UserService.getConversation(id);
@@ -75,7 +76,7 @@ export default new class AuthController {
     }
 
     
-    async updateLikeCount(req, res, next) {
+    async updateLikeCount(req: Request, res: Response, next: NextFunction) {
         try {
             const { post_id, user_id } = req.body;
             const likeData = await UserService.updateLikeCount(post_id, user_id);

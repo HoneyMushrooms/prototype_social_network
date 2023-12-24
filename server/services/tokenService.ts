@@ -11,7 +11,7 @@ export default new class TokenService {
         return { accessToken, refreshToken };
     }
 
-    async saveToken(id, refreshToken, fingerprint) {
+    async saveToken(id: string, refreshToken: string, fingerprint: string) {
         const tokenData = await redisDB.SMEMBERS(id);
         tokenData.forEach( async (e) => {
             if(e.includes(fingerprint)) {
@@ -55,7 +55,7 @@ export default new class TokenService {
 
     async findToken(id: string, token: string, fingerprint: string) {
         const tokenData = await redisDB.SMEMBERS(id);
-        let tk;
+        let tk = '';
         
         tokenData.forEach( e => {
             if(e.includes(token) && e.includes(fingerprint)) {
