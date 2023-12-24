@@ -34,7 +34,7 @@ export default new class userService {
         return { userData: { ...userData[0], ...relationshipData[0] }, postData };
     }
 
-    async createPost(id: string, file: Express.Multer.File, text: string) {
+    async createPost(id: string, file?: Express.Multer.File, text?: string) {
 
         let link = '', type = '';
         if(file) {
@@ -55,7 +55,7 @@ export default new class userService {
         }
     }
 
-    async updateUser(id: string, file: Express.Multer.File, name: string, surname: string, logo: string, city: string) {
+    async updateUser(id: string, name: string, surname: string, logo: string, city: string, file?: Express.Multer.File) {
 
         if(file) {
             if(logo !== 'default_logo/anonym.jpg') await rm(join('files', logo));

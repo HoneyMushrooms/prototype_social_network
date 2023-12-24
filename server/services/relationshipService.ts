@@ -1,10 +1,11 @@
 import { pool as postgresDB } from '../db/postgresDB.js';
+import { IRelationship, IFind } from './relationship.interfase.js';
 
 export default new class relationshipService {
 
-    async getUsersByFullName(id, name, surname) {
+    async getUsersByFullName(id: string, name: string, surname: string) {
         
-        const { rows } = await postgresDB.query(`
+        const { rows } = await postgresDB.query<IFind>(`
             SELECT u.id as uuid, u.name, u.surname, ui.logo, r.relationship_status, user1
               FROM public.user u
               LEFT JOIN public.user_info ui ON u.id = ui.user_id
@@ -27,9 +28,9 @@ export default new class relationshipService {
         return usersData;
     } 
 
-    async getFriends(id) {
+    async getFriends(id: string) {
         
-        const { rows } = await postgresDB.query(`
+        const { rows } = await postgresDB.query<IRelationship>(`
             SELECT name, surname, uuid, logo
               FROM public.user u
               JOIN (
@@ -47,9 +48,9 @@ export default new class relationshipService {
         return friendsData;
     }
 
-    async getFollowers(id) {
+    async getFollowers(id: string) {
 
-        const { rows } = await postgresDB.query(`
+        const { rows } = await postgresDB.query<IRelationship>(`
             SELECT name, surname, user1 as uuid, logo
               FROM public.user u
               JOIN public.relationship r ON r.user1 = u.id AND relationship_status = false AND user2 = $1
@@ -62,9 +63,9 @@ export default new class relationshipService {
         return followersData;
     }
 
-    async getSubscriptions(id) {
+    async getSubscriptions(id: string) {
         
-        const { rows } = await postgresDB.query(`
+        const { rows } = await postgresDB.query<IRelationship>(`
             SELECT name, surname, user2 as uuid, logo
               FROM public.user u
               JOIN public.relationship r ON r.user2 = u.id AND relationship_status = false AND user1 = $1
@@ -77,22 +78,22 @@ export default new class relationshipService {
         return subscriptionsData;
     }
 
-    async createRequestFriend(user1, user2) {
+    async createRequestFriend(user1: string, user2: string) {
         await postgresDB.query(`INSERT INTO public.relationship (user1, user2) VALUES ($1, $2)`, [user1, user2]);
     }
 
-    async deleteRequestFriend(user1, user2) {
+    async deleteRequestFriend(user1: string, user2: string) {
         await postgresDB.query(`DELETE FROM public.relationship WHERE user1 = $1 AND user2 = $2`, [user1, user2]);
     }
 
-    async createFriendFromFollower(user1, user2) {
+    async createFriendFromFollower(user1: string, user2: string) {
         await Promise.all([
             postgresDB.query(`UPDATE public.relationship SET relationship_status = true WHERE user1 = $1 AND user2 = $2`, [user1, user2]),
             postgresDB.query(`INSERT INTO public.conversation (user1, user2) VALUES ($1, $2)`, [user1, user2])
         ]);
     }
 
-    async createFollowerFromFriend(user1, user2) {
+    async createFollowerFromFriend(user1: string, user2: string) {
         await Promise.all([
             postgresDB.query(`
                 UPDATE public.relationship 

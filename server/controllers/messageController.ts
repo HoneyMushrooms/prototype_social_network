@@ -1,14 +1,15 @@
 import MessageService from '../services/messageService.js';
+import { Request, Response, NextFunction } from "express";
 
 export default new class MessageController {
 
-    async addMessage(req, res, next) {
+    async addMessage(req: Request, res: Response, next: NextFunction) {
         try {
             const sender_id = req.id;
             const file = req.file;
             const { text, recipient_id } = req.body;
             const { conversation_id } = req.params;
-            const messageData = await MessageService.addMessage(file, text, sender_id, recipient_id, conversation_id);
+            const messageData = await MessageService.addMessage(sender_id, recipient_id, conversation_id, file, text);
             
             return res.status(201).json(messageData);
         } catch(err) {

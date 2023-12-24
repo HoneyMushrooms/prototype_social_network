@@ -20,7 +20,7 @@ export default new class AuthController {
             const file = req.file;
             const { name, surname, logo, city } = req.body;
 
-            const userData = await UserService.updateUser(id, file, name, surname, logo, city);
+            const userData = await UserService.updateUser(id, name, surname, logo, city, file);
             res.json(userData);
         } catch(err) {
             next(err);

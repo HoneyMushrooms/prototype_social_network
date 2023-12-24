@@ -17,10 +17,10 @@ interface IUserData extends IUser, Omit<IUserInfo, 'id' | 'user_id'> {}
 
 interface IPost {
     id: number;
-    text: string;
     user_id: string;
-    link: string;
-    type: string;
+    text: string | null;
+    link: string | null;
+    type: string | null;
     create_time: string;
     like: number;
 }
@@ -42,15 +42,28 @@ interface INewsData extends Pick<IUserInfo, 'name' | 'surname'>, Omit<IPost, 'us
 }
 
 interface ConversationData extends Pick<IUserInfo, 'name' | 'surname'> {
-    uuid: string; // UUID друга
-    text?: string; // Текст последнего сообщения в беседе
-    type?: string; // Тип последнего сообщения
-    create_time?: string; // Время создания последнего сообщения
+    uuid: string;
+    text?: string | null; 
+    type?: string | null; 
+    create_time?: string; 
     conversation_id: number;
 }
 
 interface IlikeData {
     like: number;
+}
+
+interface IActive {
+    id: number;       
+    isActive: boolean;
+    link: string;     
+    user_id: string;  
+}
+
+interface IResetPassword {
+    id: number;              
+    reset_link: string;      
+    user_id: string;         
 }
 
 export { 
@@ -62,4 +75,8 @@ export {
     INewsData, 
     ConversationData,
     IlikeData,
+    IUserInfo,
+    IUser,
+    IActive,
+    IResetPassword,
 };
