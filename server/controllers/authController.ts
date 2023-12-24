@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 export default new class AuthController {
 
-    async registration(req, res, next) {
+    async registration(req: Request, res: Response, next: NextFunction) {
         try {
             const { name, surname, city, email, password, fingerprint } = req.body;
             const { tokens, userData } = await AuthService.registration(name, surname, city, email, password, fingerprint);

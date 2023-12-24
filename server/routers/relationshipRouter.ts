@@ -1,7 +1,7 @@
 import { Router } from "express";
 import RelationshipController from "../controllers/relationshipController.js";
 
-const router = new Router();
+const router = Router();
 
 router.get('/friend', RelationshipController.getFriends);
 router.get('/follower', RelationshipController.getFollowers);

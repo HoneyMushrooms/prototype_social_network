@@ -4,12 +4,13 @@ import { Request, Response, NextFunction } from "express";
 
 export default function (req: Request, res: Response, next: NextFunction) {
     try {
-        if(!req.get('authorization')) {
+
+        const authorizationData = req.get('authorization');
+        if(!authorizationData) {
             return next(ApiError.UnauthorizedError());
         }
 
-        const typeToken = req.get('authorization').split(' ')[0];
-        const accessToken = req.get('authorization').split(' ')[1];
+        const [typeToken, accessToken] = authorizationData.split(' ');
         if(typeToken !== 'Bearer' || !accessToken) {
             return next(ApiError.UnauthorizedError());
         }

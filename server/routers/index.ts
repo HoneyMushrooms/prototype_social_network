@@ -5,7 +5,7 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 import relationshipRouter from './relationshipRouter.js';
 import messageRouter from './messageRouter.js';
 
-const router = new Router();
+const router = Router();
 
 router.use('/user', authMiddleware, userRouter);
 router.use('/auth', authRouter);
