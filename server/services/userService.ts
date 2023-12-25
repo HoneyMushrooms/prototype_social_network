@@ -73,7 +73,7 @@ export default new class userService {
         return { id, name, surname, logo, city};
     }
 
-    async getNews(id: string, limit: number, lastItem: number = 2147483647) {
+    async getNews(id: string, limit: number, lastItem: number | undefined = 2147483647) {
 
         const { rows: newsData } = await postgresDB.query<INewsData>(`
             SELECT p.id as id, name, surname, uuid, create_time, text, link, type, p.like, 
@@ -98,7 +98,7 @@ export default new class userService {
     }
 
     async getConversation(id: string) {
-    
+
         const { rows: conversationData } = await postgresDB.query<ConversationData>(`
             WITH last_messages AS (
                 SELECT conversation_id, text, type, create_time, ROW_NUMBER() OVER (PARTITION BY conversation_id ORDER BY id DESC) AS rn

@@ -61,9 +61,10 @@ export default new class UserController {
 
     async getNews(req: Request, res: Response, next: NextFunction) {
         try {
-            const { limit, lastItem } = req.query as { limit: string, lastItem: string};
+            const { limit, lastItem } = req.query as { limit: string, lastItem: number | undefined};
             const id = req.id;
-            const newsData = await UserService.getNews(id, +limit, +lastItem);
+            
+            const newsData = await UserService.getNews(id, +limit, lastItem);
 
             return res.json(newsData);
         } catch(err) {
