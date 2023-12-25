@@ -7,7 +7,16 @@ import Router from "./routers/index.js";
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import redisDB from './db/redisDB.js';
 import { createDatabaseAndTables } from './db/postgresDB.js';
-import { WebSocketServer } from 'ws';
+import { WebSocketServer, WebSocket} from 'ws';
+
+declare global {
+    namespace Express {
+        interface Request {
+            id: string;
+            file?: Express.Multer.File;
+        }
+    }
+}
 
 dotenv.config();
 const app = express();
@@ -19,7 +28,7 @@ app.use(cookieParser());
 app.use('/api', Router);
 app.use(errorMiddleware);
 
-const sockets = new Map();
+const sockets = new Map<string, WebSocket[]>();
 
 try {
     await redisDB.connect();
@@ -29,16 +38,22 @@ try {
     const ws = new WebSocketServer({ server });
     
     ws.on('connection', (socket, req) => {
-        const id = req.url.slice(1);
-    
-        if(!sockets.get(id)) {
-            sockets.set(id, [socket]);         
+        const id = req.url?.slice(1);
+        
+        if(!id) {
+            throw new Error('something wrong');
+        }
+        
+        const socketsData = sockets.get(id);
+
+        if(socketsData) {
+            socketsData.push(socket);
         } else {
-            sockets.get(id).push(socket);
-        }        
+            sockets.set(id, [socket]);         
+        }
         
         socket.on('message', (message) => {
-            const msg = JSON.parse(message);
+            const msg = JSON.parse(message.toString());
             const recipient = sockets.get(msg.to);
             
             if(recipient) {
@@ -49,7 +64,7 @@ try {
         socket.on('error', console.error);
 
         socket.on('close', () => {
-            const socketData = sockets.get(id);
+            const socketData = sockets.get(id) as WebSocket[]; 
             const index = socketData.indexOf(socket);
             if(index !== -1) {
                 socketData.splice(index, 1);

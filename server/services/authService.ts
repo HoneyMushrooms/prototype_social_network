@@ -6,11 +6,12 @@ import { env } from 'process';
 import TokenService from "./tokenService.js";
 import ApiError from "../exception/apiError.js";
 import MailTemplate from '../templates/mailTemplates.js';
+import { IUserInfo, IUser, IActive, IResetPassword } from './user.interfase.js';
 
 export default new class AuthService {
 
-    async registration(name, surname, city, email, password, fingerprint) {
-        const { rows } = await postgresDB.query( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
+    async registration(name: string, surname: string, city: string, email: string, password: string, fingerprint: string) {
+        const { rows } = await postgresDB.query<IUserInfo>( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
         
         if(rows.length !== 0) {
             throw ApiError.BadRequest(`Пользователь с таким почтовым адресом ${email} уже существует!`);
@@ -22,7 +23,7 @@ export default new class AuthService {
         const id = v4();
         
         await postgresDB.query( 'INSERT INTO public.user (id, name, surname) VALUES ($1, $2, $3)', [id, name, surname] );
-        const { rows: logo } = await postgresDB.query( 'INSERT INTO public.user_info (email, city, password, user_id) VALUES ($1, $2, $3, $4) RETURNING logo', [email, city, hashPassword, id] );
+        const { rows: logo } = await postgresDB.query<Pick<IUserInfo, 'logo'>>( 'INSERT INTO public.user_info (email, city, password, user_id) VALUES ($1, $2, $3, $4) RETURNING logo', [email, city, hashPassword, id] );
         await postgresDB.query( 'INSERT INTO public.active (link, user_id) VALUES ($1, $2)', [ activationLink, id] );
         await postgresDB.query( 'INSERT INTO public.reset_password (reset_link, user_id) VALUES ($1, $2)', [ reset_link, id] );
 
@@ -36,8 +37,8 @@ export default new class AuthService {
         return { tokens, userData: { name, surname, id, city, logo: logo[0].logo }};
     }
 
-    async login(email, password, fingerprint) {
-        const userInfoData = await postgresDB.query( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
+    async login(email: string, password: string, fingerprint: string) {
+        const userInfoData = await postgresDB.query<IUserInfo & { password: string }>( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
         
         if(userInfoData.rows.length == 0) {
             throw ApiError.BadRequest(`Пользователь с таким почтовым адресом ${email} не существует!`);
@@ -49,7 +50,7 @@ export default new class AuthService {
             throw ApiError.BadRequest("Введен неверный пароль!");
         }
 
-        const userData = await postgresDB.query( 'SELECT * FROM public.user WHERE id = $1', [userInfo.user_id] );
+        const userData = await postgresDB.query<IUser>( 'SELECT * FROM public.user WHERE id = $1', [userInfo.user_id] );
         const user = userData.rows[0];
 
         const tokens = TokenService.generationTokens({ id: user.id });
@@ -58,8 +59,8 @@ export default new class AuthService {
         return { tokens, userData: { name: user.name, surname: user.surname, id: user.id, city: userInfo.city, logo: userInfo.logo }};
     }
 
-    async activate(link) {
-        const activeData = await postgresDB.query( 'SELECT * FROM public.active WHERE link = $1', [link] );
+    async activate(link: string) {
+        const activeData = await postgresDB.query<IActive>( 'SELECT * FROM public.active WHERE link = $1', [link] );
     
         if(activeData.rows.length === 0) {
             throw ApiError.BadRequest(`Неккоректная ссылка активации!`);
@@ -68,9 +69,9 @@ export default new class AuthService {
         await postgresDB.query( 'UPDATE public.active SET "isActive" = true WHERE link = $1', [link] );
     }
 
-    async forgotPassword(email) {
+    async forgotPassword(email: string) {
         
-        const userInfoData = await postgresDB.query( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
+        const userInfoData = await postgresDB.query<IUserInfo>( 'SELECT * FROM public.user_info WHERE email = $1', [email] );
     
         if(userInfoData.rows.length === 0) {
             throw ApiError.BadRequest(`Данный почтовый ящик не зарегистрирован!`);
@@ -78,14 +79,14 @@ export default new class AuthService {
         
         const userInfo = userInfoData.rows[0];
     
-        const activeData = await postgresDB.query( 'SELECT * FROM public.active WHERE user_id = $1', [userInfo.user_id] );
+        const activeData = await postgresDB.query<IActive>( 'SELECT * FROM public.active WHERE user_id = $1', [userInfo.user_id] );
         const active = activeData.rows[0];
 
         if(!active.isActive) {
             throw ApiError.BadRequest(`Данный почтовый ящик не подтвержден!`);
         }
         
-        const { rows: [ link ] } = await postgresDB.query( 
+        const { rows: [ link ] } = await postgresDB.query<Pick<IResetPassword, 'reset_link'>>( 
             `SELECT reset_link FROM public.reset_password WHERE user_id = $1`, 
         [userInfo.user_id] );
 
@@ -93,9 +94,9 @@ export default new class AuthService {
         await MailService.sendActivationMail(email, template);
     }
     
-    async resetPassword(link, password) {
+    async resetPassword(link: string, password: string) {
         
-        const resetData = await postgresDB.query( 
+        const resetData = await postgresDB.query<IResetPassword>( 
             `SELECT * FROM public.reset_password WHERE reset_link = $1`, 
         [link] );
 
@@ -111,25 +112,29 @@ export default new class AuthService {
         await postgresDB.query( 'UPDATE public.reset_password SET reset_link = $1 WHERE user_id = $2', [newResetLink, id] );
     }
 
-    async logout(refreshToken, fingerprint, id) {
+    async logout(refreshToken: string, fingerprint: string, id: string) {
         await TokenService.removeToken(refreshToken, fingerprint, id);
     }
 
-    async refresh(refreshToken, fingerprint) {
+    async refresh(refreshToken: string, fingerprint: string) {
         if (!refreshToken) {
             throw ApiError.UnauthorizedError();
         }
         
         const id = TokenService.validateRefreshToken(refreshToken);
-        const tokenFromDb = await TokenService.findToken(id, refreshToken, fingerprint);
-        if (!id || !tokenFromDb) {
+        if(!id) {
             throw ApiError.UnauthorizedError();
         }
-        
+
+        const tokenFromDb = await TokenService.findToken(id, refreshToken, fingerprint);
+        if(!tokenFromDb) {
+            throw ApiError.UnauthorizedError();
+        }
+
         const tokens = TokenService.generationTokens({ id });
         await TokenService.saveToken(id, tokens.refreshToken, fingerprint);
         
-        const {rows: userData} = await postgresDB.query( `
+        const {rows: userData} = await postgresDB.query<Omit<IUserInfo, 'id' | 'user_id'>>(`
             SELECT name, surname, city, logo 
              FROM public.user u
              JOIN public.user_info ui ON ui.user_id = u.id

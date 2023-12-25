@@ -1,13 +1,13 @@
 import AuthService from "../services/authService.js";
-import { env } from 'process';
+import { Request, Response, NextFunction } from "express";
 
 export default new class AuthController {
 
-    async registration(req, res, next) {
+    async registration(req: Request, res: Response, next: NextFunction) {
         try {
-            const { name, surname, city, email, password, fingerprint } = req.body;
+            const { name, surname, city, email, password, fingerprint } = req.body as { [key: string]: string; };
             const { tokens, userData } = await AuthService.registration(name, surname, city, email, password, fingerprint);
-            
+
             return res.status(201)
                .cookie('refreshToken', tokens.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
                .cookie('first_visit', 'Подтвердите почту!')
@@ -17,9 +17,9 @@ export default new class AuthController {
         }
     }
 
-    async login(req, res, next) {
+    async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, password, fingerprint } = req.body;
+            const { email, password, fingerprint } = req.body as { [key: string]: string; };
             const { tokens, userData } = await AuthService.login(email, password, fingerprint);
         
             return res.cookie('refreshToken', tokens.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
@@ -29,20 +29,20 @@ export default new class AuthController {
         }
     }
 
-    async active(req, res, next) {
+    async active(req: Request, res: Response, next: NextFunction) {
         try {
             const { link } = req.params;
-            await AuthService.activate(link); 
+            await AuthService.activate(link);
             
-            return res.redirect(301, env.CLIENT_URL + '/main?confirm_email=Вы успешно подтвердили почту!');
+            return res.redirect(301, process.env.CLIENT_URL + '/main?confirm_email=Вы успешно подтвердили почту!');
         } catch(err) {
             next(err);
         }
     }
 
-    async forgotPassword(req, res, next) {
+    async forgotPassword(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email } = req.body;
+            const { email } = req.body as { [key: string]: string; };
             const id = await AuthService.forgotPassword(email);
             
             return res.json('На вашу почту были отправленны инструкции сброса пароля!');
@@ -51,21 +51,21 @@ export default new class AuthController {
         }
     }
 
-    async resetPassword(req, res, next) {
+    async resetPassword(req: Request, res: Response, next: NextFunction) {
         try {
-            const { link, password } = req.body;
+            const { link, password } = req.body as { [key: string]: string; };
             await AuthService.resetPassword(link, password);
             
-            return res.json("Пароль успешно изменен!");
+            return res.json('Пароль успешно изменен!');
         } catch(err) {
             next(err);
         }
     }
 
-    async refresh(req, res, next) {
+    async refresh(req: Request, res: Response, next: NextFunction) {
         try {
-            const { refreshToken } = req.cookies;
-            const { fingerprint } = req.body
+            const { refreshToken } = req.cookies as { [key: string]: string; };
+            const { fingerprint } = req.body as { [key: string]: string; };
             const { tokens, userData } = await AuthService.refresh(refreshToken, fingerprint);
 
             return res.cookie('refreshToken', tokens.refreshToken, {maxAge: 60 * 24 * 60 * 60 * 1000, httpOnly: true})
@@ -75,10 +75,10 @@ export default new class AuthController {
         }
     }
 
-    async logout(req, res, next) {
+    async logout(req: Request, res: Response, next: NextFunction) {
         try {
-            const { refreshToken } = req.cookies;
-            const { fingerprint } = req.body; 
+            const { refreshToken } = req.cookies as { [key: string]: string; };
+            const { fingerprint } = req.body as { [key: string]: string; };
             const id = req.id;
             await AuthService.logout(refreshToken, fingerprint, id);
             

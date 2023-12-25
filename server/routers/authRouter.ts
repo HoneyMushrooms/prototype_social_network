@@ -4,7 +4,7 @@ import { validationLoginAndRegister, validationFogotPassword, validationResetPas
 import { loginLimit, resetLimit } from "../middlewares/limitMiddleware.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
-const router = new Router();
+const router = Router();
 
 router.get('/activate/:link', AuthController.active);
 router.post('/registration', validationLoginAndRegister, AuthController.registration);

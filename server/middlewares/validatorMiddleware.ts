@@ -1,7 +1,8 @@
 import { validationResult, body, query } from'express-validator';
 import ApiError from '../exception/apiError.js';
+import { Request, Response, NextFunction } from "express";
 
-const validationData = (req, res, next) => {
+const validationData = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         throw ApiError.BadRequest(errors.array()[0].msg);

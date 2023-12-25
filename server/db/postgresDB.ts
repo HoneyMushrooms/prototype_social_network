@@ -1,31 +1,31 @@
-import pkg from 'pg';
+import pkg, { QueryResult } from 'pg';
 import dotenv from 'dotenv';
-import { env } from 'process';
+import { INameDB } from './pg.interfase.js';
 
 dotenv.config();
 
 const { Pool, Client } = pkg;
 
 const client = new Client({
-    user: env.POSTGRES_USER,
-    password: env.POSTGRES_PASSWORD,
-    host: env.POSTGRES_HOST,
-    port: env.POSTGRES_PORT,
-    database: env.POSTGRES_NAME,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT as unknown as number,
+    database: process.env.POSTGRES_NAME,
 });
 
 const pool = new Pool({
-    user: env.POSTGRES_USER,
-    password: env.POSTGRES_PASSWORD,
-    host: env.POSTGRES_HOST,
-    port: env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT as unknown as number,
     database: 'cherryconect',
 });
 
 
 async function createDatabaseAndTables() {
     await client.connect();
-    const { rows } = await client.query(`SELECT 1 FROM pg_database WHERE datname = 'cherryconect'`);
+    const { rows }: QueryResult<INameDB> = await client.query(`SELECT 1 FROM pg_database WHERE datname = 'cherryconect'`);
     
     if(!rows.length) {
         await client.query(`CREATE DATABASE cherryconect`);

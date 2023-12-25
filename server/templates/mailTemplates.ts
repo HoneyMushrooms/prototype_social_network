@@ -1,5 +1,8 @@
+import { ITemplateHTML } from "./mail.interface.js";
+
 export default class MailTemplate {
-    static registerHTML(link) {
+    
+    static registerHTML(link: string): ITemplateHTML {
         return {
             subject: 'Aктивация аккаунта на сайте CherryConnect',
             html: `
@@ -11,7 +14,7 @@ export default class MailTemplate {
         };
     }
 
-    static resetHTML(link) {
+    static resetHTML(link: string): ITemplateHTML {
         return {
             subject: 'Сброс пароля на сайте CherryConnect',
             html:  `

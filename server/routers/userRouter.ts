@@ -3,7 +3,7 @@ import UserController from "../controllers/userController.js";
 import { validationUserId } from "../middlewares/validatorMiddleware.js";
 import upload from "../middlewares/uploadMiddleware.js";
 
-const router = new Router();
+const router = Router();
 
 router.get('/', validationUserId, UserController.getUser);
 router.put('/', upload.single('file'), UserController.updateUser);
