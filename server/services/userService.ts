@@ -1,8 +1,9 @@
 import { pool as postgresDB } from '../db/postgresDB.js';
 import { join } from 'path';
 import { rm } from 'fs/promises';
-import { IUserData, IRelationshipData, IPostData, IDeletePost, INewsData, ConversationData, IlikeData } from './user.interfase.js';
+import { IUserData, IRelationshipData, IPostData, IDeletePost, INewsData, ConversationData, IlikeData, IPost } from './user.interfase.js';
 import { QueryResult } from 'pg';
+import ApiError from '../exception/apiError.js';
 
 export default new class userService {
 
@@ -33,16 +34,20 @@ export default new class userService {
 
         return { userData: { ...userData[0], ...relationshipData[0] }, postData };
     }
-
+    
     async createPost(id: string, file?: Express.Multer.File, text?: string) {
 
+        if (!file && (typeof text === 'undefined' || text === '')) {
+            throw ApiError.BadRequest('Types error');
+        }
+        
         let link = '', type = '';
         if(file) {
             link = join('userFiles', id, 'posts', file.filename);
             type = (file.mimetype).split('/')[0];
         }
 
-        const { rows: newPost } = await postgresDB.query( 'INSERT INTO public.post (text, user_id, link, type, create_time) VALUES ($1, $2, $3, $4, now()) RETURNING *', [text, id, link, type] );
+        const { rows: newPost } = await postgresDB.query<IPost>( 'INSERT INTO public.post (text, user_id, link, type, create_time) VALUES ($1, $2, $3, $4, now()) RETURNING *', [text, id, link, type] );
         
         return newPost;
     }

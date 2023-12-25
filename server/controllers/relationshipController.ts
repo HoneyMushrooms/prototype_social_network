@@ -1,11 +1,12 @@
 import RelationshipService from "../services/relationshipService.js";
+import { Request, Response, NextFunction } from "express";
 
 export default new class AuthController {
 
-    async getUsersByFullName(req, res, next) {
+    async getUsersByFullName(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
-            const { name, surname } = req.query;
+            const { name, surname } = req.query as { [key: string]: string; };;
             const usersData = await RelationshipService.getUsersByFullName(id, name, surname);
     
             return res.json(usersData);
@@ -14,7 +15,7 @@ export default new class AuthController {
         }
     }
 
-    async getFriends(req, res, next) {
+    async getFriends(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const friendsData = await RelationshipService.getFriends(id);
@@ -25,7 +26,7 @@ export default new class AuthController {
         }
     }
 
-    async getFollowers(req, res, next) {
+    async getFollowers(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const followersData = await RelationshipService.getFollowers(id);
@@ -36,7 +37,7 @@ export default new class AuthController {
         }
     }
 
-    async getSubscriptions(req, res, next) {
+    async getSubscriptions(req: Request, res: Response, next: NextFunction) {
         try {
             const id = req.id;
             const subscriptionsData = await RelationshipService.getSubscriptions(id);
@@ -47,10 +48,10 @@ export default new class AuthController {
         }
     }
 
-    async createRequestFriend(req, res, next) {
+    async createRequestFriend(req: Request, res: Response, next: NextFunction) {
         try {
             const user1 = req.id;
-            const { user2 } = req.body;
+            const { user2 } = req.body as { [key: string]: string; };
             await RelationshipService.createRequestFriend(user1, user2);
             
             return res.sendStatus(201);
@@ -59,10 +60,10 @@ export default new class AuthController {
         }
     }
 
-    async createFriendFromFollower(req, res, next) {
+    async createFriendFromFollower(req: Request, res: Response, next: NextFunction) {
         try {
             const user2 = req.id;
-            const { user1 } = req.body;
+            const { user1 } = req.body as { [key: string]: string; };
             await RelationshipService.createFriendFromFollower(user1, user2);
             
             return res.sendStatus(204);
@@ -71,10 +72,10 @@ export default new class AuthController {
         }
     }
 
-    async createFollowerFromFriend(req, res, next) {
+    async createFollowerFromFriend(req: Request, res: Response, next: NextFunction) {
         try {
             const user2 = req.id;
-            const { user1 } = req.body;
+            const { user1 } = req.body as { [key: string]: string; };
             await RelationshipService.createFollowerFromFriend(user1, user2);
             
             return res.sendStatus(204);
@@ -83,10 +84,10 @@ export default new class AuthController {
         }
     }
 
-    async deleteRequestFriend(req, res, next) {
+    async deleteRequestFriend(req: Request, res: Response, next: NextFunction) {
         try {
             const user1 = req.id;
-            const { user2 } = req.query;
+            const { user2 } = req.query as { [key: string]: string; };
             await RelationshipService.deleteRequestFriend(user1, user2);
             
             return res.sendStatus(204);

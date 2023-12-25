@@ -7,9 +7,9 @@ export default new class MessageController {
         try {
             const sender_id = req.id;
             const file = req.file;
-            const { text, recipient_id } = req.body;
+            const { text, recipient_id } = req.body as { [key: string]: string };
             const { conversation_id } = req.params;
-            const messageData = await MessageService.addMessage(sender_id, recipient_id, conversation_id, file, text);
+            const messageData = await MessageService.addMessage(sender_id, recipient_id, +conversation_id, file, text);
             
             return res.status(201).json(messageData);
         } catch(err) {
@@ -17,10 +17,10 @@ export default new class MessageController {
         }
     }
 
-    async getMessages(req, res, next) {
+    async getMessages(req: Request, res: Response, next: NextFunction) {
         try {
-            const { conversation_id } = req.query;
-            const messageDate = await MessageService.getMessages(conversation_id);
+            const { conversation_id } = req.query as { conversation_id: string };
+            const messageDate = await MessageService.getMessages(+conversation_id);
 
             return res.json(messageDate);
         } catch(err) {
